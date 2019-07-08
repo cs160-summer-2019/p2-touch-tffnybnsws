@@ -84,7 +84,16 @@
 		</div>
 	</div>
 	<script>
-	  // your solution here
+  window.addEventListener('load', function() {
+    
+    // Tap
+    var element = document.getElementById('tap-box');
+    var hammertime = Hammer(element).on("tap", function(event) {
+        alert('Go bears! ʕ　·ᴥ·ʔ');
+    })
+    
+                                      
+    }, false);
   </script>
 </body>
 </html>
