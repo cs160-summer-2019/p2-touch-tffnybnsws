@@ -13,7 +13,7 @@
 	<script src="{% static '/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
 	<script src="{% static '/vendors/hammer/hammer.min.js' %}"></script>
 	<script src="{% static '/vendors/hammer/jquery.hammer.js' %}"></script>
-
+    
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="viewport" content="width=device-width, user-scalable=no" />
 
@@ -84,16 +84,66 @@
 		</div>
 	</div>
 	<script>
-  window.addEventListener('load', function() {
-    
+     window.addEventListener('load', function() {
+      }, false);
+
+    // Rotate
+    $('#rotate-box').on('click', function(){
+    var angle = ($('#rotate-box').data('angle') + 90) || 90;
+    $('#rotate-box').css({'transform': 'rotate(' + angle + 'deg)'});
+    $('#rotate-box').data('angle', angle);
+    });
+
+    // Pinch
+    var scale = 1;
+    var pinched = document.getElementById('pinch-box');
+    var Pinch = new Hammer(pinched);
+    Pinch.get('pinch').set({enable: true});
+    Pinch.on("pinchin", function(e) {
+    scale -= 0.02;
+    $('#pinch-box').css('zoom', scale);
+    });
+    Pinch.on("pinchout", function(e) {
+    scale += 0.02;
+    $('#pinch-box').css('zoom', scale);
+    });
+
+    // Press
+    var pressed = document.getElementById('press-box');
+    var Press = Hammer(pressed).on("press", function(event) {
+      $('#press-box').hide();
+    });
+
+    // Pan
+    var panned = document.getElementById('pan-box');
+    var Pan = new Hammer(panned);
+    Pan.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+    Pan.on("panleft panright panup pandown tap press", function(ev) {
+    panned.textContent = ev.type;
+    });
+
     // Tap
-    var element = document.getElementById('tap-box');
-    var hammertime = Hammer(element).on("tap", function(event) {
+    var tapped = document.getElementById('tap-box');
+    var Tap = Hammer(tapped).on("tap", function(event) {
         alert('Go bears! ʕ　·ᴥ·ʔ');
-    })
-    
-                                      
-    }, false);
+    });
+
+    // Swipe
+    var swiped = document.getElementById('swipe-box');
+    var manager = new Hammer.Manager(swiped);
+    var Swipe = new Hammer.Swipe();
+    manager.add(Swipe);
+    var deltaX = 0;
+    var deltaY = 0;
+    manager.on('swipe', function(e) {
+      deltaX = deltaX + e.deltaX;
+      var direction = e.offsetDirection;
+      var translate3d = 'translate3d(' + deltaX + 'px, 0, 0)';
+      if (direction === 4 || direction === 2) {
+        e.target.innerText = deltaX;
+        e.target.style.transform = translate3d;
+      }
+    }); 
   </script>
 </body>
 </html>
